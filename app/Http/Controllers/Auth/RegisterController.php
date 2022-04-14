@@ -53,6 +53,8 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            // A validação 'confirmed', por trás dos panos, cria um segundo campo password_confirmation e o compara com o password original
+            // De forma geral um campo <field>_confirmation é sempre comparado a um <field>
         ]);
     }
 
