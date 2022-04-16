@@ -7,6 +7,7 @@ use App\Models\Tarefa;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+
 //use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,34 +24,12 @@ class TarefaController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return string
      */
-    public function index(): string
+    public function index()
     {
-
-        return 'Chegamos até aqui';
-//            $id = Auth::user()->id;
-//            $nome = Auth::user()->name;
-//            $email = Auth::user()->email;
-//
-//            return "Id: $id | Nome: $nome | Email: $email";
-
-        /*
-         * auth()->check() retorna true para usuário autenticado
-         * Todos os atributos contidos na tabela users podem ser recuperados através do helper auth
-         */
-        /*
-         * if(auth()->check()) {
-               $id = auth()->user()->id;
-               $nome = auth()->user()->name;
-               $email = auth()->user()->email;
-               return "Id: $id | Nome: $nome | Email: $email";
-           } else {
-               return ('Você não está logado no sistema');
-           }
-         */
-
+        $user = auth()->user();
+        $tarefas = $user->tarefas()->paginate(10);
+        return view('tarefa.index', ['tarefas' => $tarefas]);
     }
 
     /**
