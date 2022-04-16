@@ -74,11 +74,17 @@ class TarefaController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param Tarefa $tarefa
-     * @return void
+     * @return View
      */
-    public function edit(Tarefa $tarefa)
+    public function edit(Tarefa $tarefa): View
     {
-        //
+        $user_id = auth()->user()->id;
+
+        if ($tarefa->user_id == $user_id) {
+            return view('tarefa.edit', compact('tarefa'));
+        }
+
+        return view('acesso-negado');
     }
 
     /**
@@ -86,11 +92,17 @@ class TarefaController extends Controller
      *
      * @param Request $request
      * @param Tarefa $tarefa
-     * @return void
+     * @return View|RedirectResponse
      */
     public function update(Request $request, Tarefa $tarefa)
     {
-        //
+        if (!$tarefa->user_id == auth()->user()->id) {
+            return view('acesso-negado');
+        }
+
+        $tarefa->update($request->all());
+
+        return redirect()->route('tarefa.show', compact('tarefa'));
     }
 
     /**
