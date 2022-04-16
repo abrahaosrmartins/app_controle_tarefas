@@ -6,6 +6,7 @@ use App\Notifications\RedefinirSenhaNotification;
 use App\Notifications\VerificarEmailNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -43,15 +44,34 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+
+    /**
+     * Sends password reset notification email
+     *
+     * @param $token
+     * @return void
+     */
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new RedefinirSenhaNotification($token, $this->email, $this->name));
     }
 
+    /**
+     * Sends email verification notification
+     *
+     * @return void
+     */
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerificarEmailNotification($this->name));
     }
+
+
+    /**
+     * Tarefa`s model relationship
+     *
+     * @return HasMany
+     */
     public function tarefas(): HasMany
     {
         return $this->hasMany(Tarefa::class);
