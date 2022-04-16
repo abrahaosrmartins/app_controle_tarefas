@@ -112,7 +112,7 @@ class TarefaController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Tarefa $tarefa
-     * @return void
+     * @return RedirectResponse|View
      */
     public function destroy(Tarefa $tarefa)
     {
@@ -123,6 +123,9 @@ class TarefaController extends Controller
         $tarefa->delete();
         return redirect()->route('tarefa.index');
     }
+
+    /**
+     * Export tasks to xlsx file
      *
      * @param $extensao
      * @return RedirectResponse|BinaryFileResponse
