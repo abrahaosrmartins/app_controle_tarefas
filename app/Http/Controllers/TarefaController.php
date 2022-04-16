@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NovaTarefaMail;
 use App\Models\Tarefa;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
+//use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class TarefaController extends Controller
 {
@@ -19,97 +24,100 @@ class TarefaController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return string
      */
-    public function index(): string
+    public function index()
     {
-            $id = Auth::user()->id;
-            $nome = Auth::user()->name;
-            $email = Auth::user()->email;
-
-            return "Id: $id | Nome: $nome | Email: $email";
-
-        /*
-         * auth()->check() retorna true para usuário autenticado
-         * Todos os atributos contidos na tabela users podem ser recuperados através do helper auth
-         */
-        /*
-         * if(auth()->check()) {
-               $id = auth()->user()->id;
-               $nome = auth()->user()->name;
-               $email = auth()->user()->email;
-               return "Id: $id | Nome: $nome | Email: $email";
-           } else {
-               return ('Você não está logado no sistema');
-           }
-         */
-
+        $user = auth()->user();
+        $tarefas = $user->tarefas()->paginate(10);
+        return view('tarefa.index', ['tarefas' => $tarefas]);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('tarefa.create');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        $dados = $request->all('tarefa', 'data_limite_conclusao');
+        $dados['user_id'] = auth()->user()->id;
+        $tarefa = Tarefa::create($dados);
+        $destinatario = auth()->user()->email; //e-mail do usuário logado (autenticado)
+        Mail::to($destinatario)->send(new NovaTarefaMail($tarefa));
+
+        return redirect()->route('tarefa.show', ['tarefa' => $tarefa->id]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Tarefa  $tarefa
-     * @return \Illuminate\Http\Response
+     * @param Tarefa $tarefa
+     * @return View
      */
-    public function show(Tarefa $tarefa)
+    public function show(Tarefa $tarefa): View
     {
-        //
+        return view('tarefa.show', compact('tarefa'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Tarefa  $tarefa
-     * @return \Illuminate\Http\Response
+     * @param Tarefa $tarefa
+     * @return View
      */
-    public function edit(Tarefa $tarefa)
+    public function edit(Tarefa $tarefa): View
     {
-        //
+        $user_id = auth()->user()->id;
+
+        if ($tarefa->user_id == $user_id) {
+            return view('tarefa.edit', compact('tarefa'));
+        }
+
+        return view('acesso-negado');
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Tarefa  $tarefa
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Tarefa $tarefa
+     * @return View|RedirectResponse
      */
     public function update(Request $request, Tarefa $tarefa)
     {
-        //
+        if (!$tarefa->user_id == auth()->user()->id) {
+            return view('acesso-negado');
+        }
+
+        $tarefa->update($request->all());
+
+        return redirect()->route('tarefa.show', compact('tarefa'));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Tarefa  $tarefa
-     * @return \Illuminate\Http\Response
+     * @param Tarefa $tarefa
+     * @return void
      */
     public function destroy(Tarefa $tarefa)
     {
-        //
+        if (!$tarefa->user_id == auth()->user()->id) {
+            return view('acesso-negado');
+        }
+
+        $tarefa->delete();
+        return redirect()->route('tarefa.index');
     }
 }
