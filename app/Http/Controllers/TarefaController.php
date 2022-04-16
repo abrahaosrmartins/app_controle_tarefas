@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TarefasExport;
 use App\Mail\NovaTarefaMail;
 use App\Models\Tarefa;
 use Illuminate\Contracts\View\View;
@@ -10,6 +11,8 @@ use Illuminate\Http\Request;
 
 //use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class TarefaController extends Controller
 {
@@ -118,6 +121,17 @@ class TarefaController extends Controller
         }
 
         $tarefa->delete();
+        return redirect()->route('tarefa.index');
+    }
+     *
+     * @param $extensao
+     * @return RedirectResponse|BinaryFileResponse
+     */
+    public function exportacao($extensao)
+    {
+        if (in_array($extensao, ['xlsx', 'csv', 'pdf'])) {
+            return Excel::download(new TarefasExport, 'tarefas.' . $extensao);
+        }
         return redirect()->route('tarefa.index');
     }
 }
