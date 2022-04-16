@@ -29,4 +29,16 @@ class TarefasExport implements FromCollection, WithHeadings, WithMapping
         ];
     }
 
+    /**
+     * @param $row
+     * @return array
+     */
+    public function map($row): array
+    {
+        return [
+            $row->id,
+            $row->tarefa,
+            date('d/m/Y', strtotime($row->data_limite_conclusao))
+        ];
+    }
 }
