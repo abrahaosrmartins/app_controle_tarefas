@@ -18,8 +18,8 @@ use App\Http\Controllers\TarefaController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('bem-vindo');
+});;
 
 Auth::routes(['verify' => true]);
 
