@@ -67,7 +67,7 @@ class TarefaController extends Controller
      */
     public function show(Tarefa $tarefa): View
     {
-       return view('tarefa.show', compact('tarefa'));
+        return view('tarefa.show', compact('tarefa'));
     }
 
     /**
