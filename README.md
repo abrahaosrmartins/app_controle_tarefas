@@ -3,9 +3,13 @@
 ### Topics covered:
 - Web Session Auth.
 - Laravel Ui package.
-    - Changes made with --auth flag
-    - User Register, Login, and password reset workflow
-    - Form validation rules
+    - Changes made with --auth flag.
+    - User Register, Login, and password reset workflow.
+    - Form validation rules.
+- Email Sending.
+  - SMTP usage.
+  - Markdown Mailables.
+  - Tracing and modifying package default rules, views and methods.
 
     <hr>
 
