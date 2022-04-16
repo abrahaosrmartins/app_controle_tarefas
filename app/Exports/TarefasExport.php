@@ -17,4 +17,16 @@ class TarefasExport implements FromCollection, WithHeadings, WithMapping
         return auth()->user()->tarefas()->get();
     }
 
+    /**
+     * @return array
+     */
+    public function headings(): array
+    {
+        return [
+            'Id da Tarefa',
+            'Tarefa',
+            'Data limite de conclusão',
+        ];
+    }
+
 }
