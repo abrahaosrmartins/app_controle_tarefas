@@ -5,7 +5,21 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Tarefas<a href="{{route('tarefa.create')}}" style="padding-left: 90%">Novo</a></div>
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6">
+                                Tarefas
+                            </div>
+                            <div class="col-6">
+                                <div class="float-right">
+                                    <a href="{{route('tarefa.create')}}" class="mr-3">Novo</a>
+                                    <a href="{{route('tarefa.exportacao', ['extensao' => 'xlsx'])}}" class="mr-3">XLSX</a>
+                                    <a href="{{route('tarefa.exportacao', ['extensao' => 'csv'])}}" class="mr-3">CSV</a>
+                                    <a href="{{route('tarefa.exportar')}}" target="_blank">PDF</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="card-body">
                         
@@ -28,7 +42,8 @@
                                     <td>{{ date('d/m/Y', strtotime($t['data_limite_conclusao'])) }}</td>
                                     <td><a href="{{ route('tarefa.edit', $t['id']) }}">Editar</a></td>
                                     <td>
-                                        <form id="form_{{$t['id']}}" method="post" action="{{ route('tarefa.destroy', ['tarefa' => $t['id']]) }}">
+                                        <form id="form_{{$t['id']}}" method="post"
+                                              action="{{ route('tarefa.destroy', ['tarefa' => $t['id']]) }}">
                                             @method('DELETE')
                                             @csrf
                                         </form>
@@ -41,7 +56,8 @@
                         
                         <nav>
                             <ul class="pagination">
-                                <li class="page-item"><a class="page-link" href="{{ $tarefas->previousPageUrl() }}">Voltar</a></li>
+                                <li class="page-item"><a class="page-link" href="{{ $tarefas->previousPageUrl() }}">Voltar</a>
+                                </li>
                                 
                                 @for($i = 1; $i <= $tarefas->lastPage(); $i++)
                                     <li class="page-item {{ $tarefas->currentPage() == $i ? 'active' : '' }}">
@@ -49,7 +65,8 @@
                                     </li>
                                 @endfor
                                 
-                                <li class="page-item"><a class="page-link" href="{{ $tarefas->nextPageUrl() }}">Avançar</a></li>
+                                <li class="page-item"><a class="page-link"
+                                                         href="{{ $tarefas->nextPageUrl() }}">Avançar</a></li>
                             </ul>
                         </nav>
                     </div>

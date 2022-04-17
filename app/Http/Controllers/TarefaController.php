@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TarefasExport;
 use App\Mail\NovaTarefaMail;
 use App\Models\Tarefa;
 use Illuminate\Contracts\View\View;
@@ -10,6 +11,9 @@ use Illuminate\Http\Request;
 
 //use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
+use PDF;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class TarefaController extends Controller
 {
@@ -109,7 +113,7 @@ class TarefaController extends Controller
      * Remove the specified resource from storage.
      *
      * @param Tarefa $tarefa
-     * @return void
+     * @return RedirectResponse|View
      */
     public function destroy(Tarefa $tarefa)
     {
@@ -119,5 +123,26 @@ class TarefaController extends Controller
 
         $tarefa->delete();
         return redirect()->route('tarefa.index');
+    }
+
+    /**
+     * Export tasks to xlsx file
+     *
+     * @param $extensao
+     * @return RedirectResponse|BinaryFileResponse
+     */
+    public function exportacao($extensao)
+    {
+        if (in_array($extensao, ['xlsx', 'csv', 'pdf'])) {
+            return Excel::download(new TarefasExport, 'tarefas.' . $extensao);
+        }
+        return redirect()->route('tarefa.index');
+    }
+
+    public function exportar() {
+        $tarefas = auth()->user()->tarefas()->get();
+        $pdf = PDF::loadView('tarefa.pdf', ['tarefas' => $tarefas]);
+        //return $pdf->download('lista_de_tarefas.pdf');
+        return $pdf->stream('lista_de_tarefas.pdf');
     }
 }
